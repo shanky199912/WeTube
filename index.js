@@ -10,8 +10,14 @@ const handlelistening = () =>
 
 const handleHome = (req, res) => res.send("HELLO WORLD");
 
+const handleMiddle = (req, res, next) => {
+    console.log("I am a MiddleWare");
+    next();
+}
 // console.log("Reqeust result :" + res);
 const handleProfile = (req, res) => res.send("Hello Shashank Tewari");
+
+app.use(handleMiddle); //order for this middleware matters , it should be above those in which ur using middleware.
 
 app.get("/profile", handleProfile); //listening on profile page
 
