@@ -1,12 +1,13 @@
 import express from "express";
 import morgan from "morgan"; //morgan is a logging system.
-import helmet from "helmet"; 
+import helmet from "helmet";
 import cookieParser from "cookie-parser";
 import bodyParser from "body-parser";
-import videoRouter from "./router/videoRouter";
 import globalRouter from "./router/globalRouter";
-import routes from "./routes";
+import { localMidddleWares } from "./middlewares";
+import videoRouter from "./router/videoRouter";
 import userRouter from "./router/userRouter";
+import routes from "./routes";
 
 // const express = require('express') //pretty old -> nowdays we use ES6 (express).
 const app = express();
@@ -33,15 +34,17 @@ app.set("view engine", "pug");
 // app.use(handleMiddle); //order for this middleware matters , it should be above those in which ur using middleware.
 
 //better way to use logger and middle ware than the previous methods.
+app.use(helmet()); //another middleware for securing the nodeJS apps.
 app.use(cookieParser());
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({extended : true}));
-app.use(helmet()); //another middleware for securing the nodeJS apps.
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(morgan("dev")); //combined,dev,common, tiny, short.
 
+app.use(localMidddleWares);
+
 app.use(routes.home, globalRouter);
-app.use(routes.home, userRouter);
-app.use(routes.home, videoRouter);
+app.use(routes.users, userRouter);
+app.use(routes.videos, videoRouter);
 // //another example of middle ware where the middleware can stop the connection from happening.
 // const middleware = (req, res, next) => {
 //     res.send('not happening / Connection broken due to middleWare');
